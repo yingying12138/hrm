@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sy.hrm.dao.DocumentMapper">
+
+    <resultMap id="documentResult" type="Document">
+        <result property="createDate" column="CREATE_DATE"></result>
+        <!-- 根据user_id关联查询 -->
+        <association property="user" javaType="User" column="USER_ID" select="com.sy.hrm.dao.UserMapper.get"></association>
+    </resultMap>
+
+    <!-- 添加文档
+        useGeneratedKeys="true" keyProperty="id": id值是自增长的,想要获取id的值,
+                                可以使用useGeneratedKeys和keyProperty
+    -->
+	<insert id="save" parameterType="Document" useGeneratedKeys="true" keyProperty="id">
+        insert into hrm_document(TITLE,URL,REMARK,CREATE_DATE,USER_ID)
+                  values(#{title},#{url},#{remark},#{createDate},#{user.id})
+	</insert>
+
+    <!--查询所有的文档 -->
+    <select id="findAll" parameterType="hashmap" resultMap="documentResult">
+        select * from hrm_document
+    </select>
+
+    <!-- 获取文档 -->
+    <select id="get" resultMap="documentResult">
+        select * from hrm_document where id = #{id}
+    </select>
+
+    <!-- 修改文档 -->
+    <update id="update" parameterType="Document">
+		update hrm_document
+			set title = #{title}, url = #{url}, remark = #{remark} where id = #{id}
+	</update>
+
+    <!-- 删除文档 -->
+    <delete id="delete" parameterType="Integer">
+        delete from hrm_document where id = #{id}
+    </delete>
+
+</mapper>
